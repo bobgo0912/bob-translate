@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package translate;
+option go_package = ".;translate";
+
+
+service Translate {
+  rpc Translate (TranslateRequest) returns (TranslateReply);
+}
+
+enum Lang {
+  unknown = 0;
+  zh = 1;
+  en = 2;
+}
+
+message Uint64Array {
+  repeated uint64 ids = 1;
+}
+
+message TranslateRequest {
+  Lang lang = 1;
+  map<uint64, Uint64Array> ids = 2;
+}
+
+message Id2String {
+  uint64  id = 1;
+  string name = 2;
+}
+
+message Translated {
+  repeated Id2String datas = 1;
+}
+
+message TranslateReply {
+  string message = 1;
+  map<uint64, Translated> datas = 2;
+}
+

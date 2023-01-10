@@ -2,11 +2,9 @@ package util
 
 import (
 	"context"
-	"fmt"
 	"github.com/bobgo0912/b0b-common/pkg/log"
 	"github.com/bobgo0912/bob-translate/internal/proto/translate"
 	"github.com/pkg/errors"
-	"reflect"
 )
 
 type Market uint64
@@ -31,12 +29,6 @@ func NewTranslate() *TranslateTool {
 	return &TranslateTool{Data: map[uint64][]*Id2Str{}, req: map[uint64]*translate.Uint64Array{}}
 }
 func (t *TranslateTool) AddName(id uint64, str *string) {
-
-	of := reflect.ValueOf(str)
-	elem := of.Elem()
-	addr := of.CanAddr()
-	set := of.CanSet()
-	fmt.Println(elem, addr, set)
 	_, ok := t.Data[uint64(NameMarket)]
 	if !ok {
 		t.Data[uint64(NameMarket)] = make([]*Id2Str, 0)
@@ -75,7 +67,6 @@ func (t *TranslateTool) AddTeam(id uint64, str *string) {
 		Id:  id,
 		Str: str,
 	})
-
 	_, ok = t.req[uint64(TeamMarket)]
 	if !ok {
 		t.req[uint64(TeamMarket)] = &translate.Uint64Array{Ids: make([]uint64, 0)}
@@ -92,14 +83,6 @@ func (t *TranslateTool) Translate(ctx context.Context, client translate.Translat
 		for _, data := range translated.Datas {
 			for _, str := range t.Data[u] {
 				if data.Id == str.Id {
-					//of := reflect.ValueOf(data.Name)
-					//valueOf := reflect.ValueOf(str.Str)
-					//addr := valueOf.CanAddr()
-					//set := valueOf.CanSet()
-					//fmt.Println(addr)
-					//fmt.Println(set)
-					//elem := valueOf.Elem()
-					//elem.Set(of)
 					*str.Str = data.Name
 					break
 				}

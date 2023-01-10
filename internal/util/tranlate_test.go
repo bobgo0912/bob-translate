@@ -2,6 +2,7 @@ package util
 
 import (
 	"context"
+	"fmt"
 	"github.com/bobgo0912/bob-translate/internal/proto/translate"
 	"google.golang.org/grpc"
 	"testing"
@@ -9,7 +10,7 @@ import (
 
 type Test struct {
 	Id   uint64
-	Name *string
+	Name string
 }
 
 func TestTranslate(t *testing.T) {
@@ -21,16 +22,32 @@ func TestTranslate(t *testing.T) {
 	defer conn.Close()
 	c := translate.NewTranslateClient(conn)
 	translateTool := NewTranslate()
-	tests := []Test{{
-		Id: 1, Name: new(string),
-	}, {Id: 2, Name: new(string)},
-		{Id: 3, Name: new(string)}}
-	for _, test := range tests {
-		translateTool.AddName(test.Id, test.Name)
+	tests := make([]*Test, 0)
+	for i := 0; i < 4; i++ {
+		var sd Test
+		sd.Id = uint64(i + 1)
+		tests = append(tests, &sd)
 	}
+	for _, test := range tests {
+		fmt.Printf("%x\n", &test.Name)
+		translateTool.AddName(test.Id, &test.Name)
+	}
+
+	idd := make([]*Test, 0)
+	for i := 0; i < 3; i++ {
+		var sd Test
+		sd.Id = uint64(i + 1)
+		idd = append(idd, &sd)
+	}
+
+	for _, test := range idd {
+		fmt.Printf("%x\n", &test.Name)
+		translateTool.AddTeam(test.Id, &test.Name)
+	}
+
 	err = translateTool.Translate(context.Background(), c, translate.Lang_zh)
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Log(tests)
+	//t.Log(tests)
 }
